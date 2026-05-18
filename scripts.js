@@ -59,6 +59,26 @@
     }));
   }
 
+  /* Nav theme toggle */
+  const themeToggle=document.querySelector('.theme-toggle');
+  const root=document.body;
+  const savedTheme=localStorage.getItem('theme')||'dark';
+  function applyNavTheme(theme){
+    root.setAttribute('data-theme',theme);
+    if(themeToggle){
+      themeToggle.innerHTML=theme==='dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      themeToggle.setAttribute('aria-label', theme==='dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+  }
+  applyNavTheme(savedTheme);
+  if(themeToggle){
+    themeToggle.addEventListener('click',()=>{
+      const next= root.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
+      applyNavTheme(next);
+      localStorage.setItem('theme',next);
+    });
+  }
+
   /* Stat counters */
   function countUp(el,target,suffix){
     const dur=1800,start=performance.now();
@@ -117,18 +137,39 @@
     });
   });
 
-  /* Footer subscribe */
+  /* Footer message form */
   const form=document.querySelector('.footer-col form');
   if(form){
     form.addEventListener('submit',e=>{
       e.preventDefault();
       const btn=form.querySelector('button');
-      const inp=form.querySelector('input');
-      if(btn){btn.textContent='Subscribed ✓';btn.style.background='rgba(74,222,128,.35)'}
-      if(inp) inp.value='';
-      setTimeout(()=>{if(btn){btn.textContent='Subscribe';btn.style.background=''}},3000);
+      const messageField=form.querySelector('textarea');
+      const message = messageField ? messageField.value.trim() : '';
+      if(!message){
+        if(btn){btn.textContent='Please write a message';}
+        setTimeout(()=>{if(btn){btn.textContent='Send Message';}},2000);
+        return;
+      }
+      const subject = 'New message from website';
+      const body = encodeURIComponent(message);
+      const mailto = `mailto:akpuroseline8@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+      if(btn){btn.textContent='Opening email client...';btn.style.background='rgba(74,222,128,.35)'}
+      window.location.href = mailto;
+      setTimeout(()=>{if(btn){btn.textContent='Send Message';btn.style.background=''}},3000);
     });
   }
+
+  /* Service card details */
+  document.querySelectorAll('.service-toggle').forEach(button=>{
+    button.addEventListener('click',()=>{
+      const card=button.closest('.service-card');
+      if(!card) return;
+      const expanded=!card.classList.contains('expanded');
+      card.classList.toggle('expanded',expanded);
+      button.setAttribute('aria-expanded',expanded);
+      button.textContent=expanded ? 'Hide details' : 'View details';
+    });
+  });
 
   /* Inject keyframes */
   const s=document.createElement('style');
