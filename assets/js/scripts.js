@@ -171,6 +171,51 @@
     });
   });
 
+  /* Hero typing effect */
+  const typedText = document.querySelector('.typed-text');
+  if(typedText){
+    const phrases = ['Web3 Copywriter','Community Manager','Tech Enthusiast','Lifelong Learner'];
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typeSpeed = 90;
+    const deleteSpeed = 45;
+    const pauseDelay = 1600;
+
+    function typeLoop(){
+      const current = phrases[phraseIndex];
+      typedText.textContent = current.slice(0,charIndex);
+
+      if(!isDeleting && charIndex < current.length){
+        charIndex += 1;
+        setTimeout(typeLoop,typeSpeed);
+        return;
+      }
+
+      if(isDeleting && charIndex > 0){
+        charIndex -= 1;
+        setTimeout(typeLoop,deleteSpeed);
+        return;
+      }
+
+      if(!isDeleting){
+        isDeleting = true;
+        setTimeout(typeLoop,pauseDelay);
+        return;
+      }
+
+      isDeleting = false;
+      phraseIndex = (phraseIndex + 1) % phrases.length;
+      setTimeout(typeLoop,500);
+    }
+
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      typedText.textContent = phrases[0];
+    } else {
+      typeLoop();
+    }
+  }
+
   /* Inject keyframes */
   const s=document.createElement('style');
   s.textContent=`@keyframes ripple{to{transform:scale(2.5);opacity:0}}`;
